@@ -11,23 +11,35 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
         storage = var.grafana_persistent_volume_claim_storage
       }
     }
-    storage_class_name = var.storage_class_name
-    # volume_name = "${kubernetes_persistent_volume.pv.metadata.0.name}"
+    volume_name = kubernetes_persistent_volume.pv.metadata.0.name
   }
 }
 
+resource "kubernetes_persistent_volume" "pv" {
+  metadata {
+    name = "grafana-pv"
+  }
+  spec {
+    capacity = {
+      storage = "2Gi"
+    }
+    access_modes = ["ReadWriteMany"]
+    persistent_volume_source {
+      gce_persistent_disk {
+        pd_name = google_compute_disk.app.name
+        fs_type = "ext4"
+      }
+    }
+    storage_class_name = "standard"
+  }
+}
 
-# resource "kubernetes_persistent_volume" "pv" {
-#   metadata {
-#     name = "grafana-pv"
-#   }
-#   spec {
-#     capacity = {
-#       storage = "2Gi"
-#     }
-#     access_modes = ["ReadWriteMany"]
-#     local = {
-#       path =  "/mnt/disks/ssd1"
-#     }
-#   }
-# }
+resource "google_compute_disk" "app" {
+  name = "grafana-disk"
+  type = "pd-standard"
+  zone = "southamerica-east1-b"
+  size = "5"
+  labels = {
+    environment = "production"
+  }
+}
