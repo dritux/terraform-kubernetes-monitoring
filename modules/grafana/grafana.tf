@@ -45,18 +45,6 @@ resource "kubernetes_deployment" "deployment" {
             container_port = 3000
           }
 
-          resources {
-            limits {
-              cpu    = "1000m"
-              memory = "2Gi"
-            }
-          requests {
-            cpu    = "500m"
-            memory = "1Gi"
-          }
-        }
-
-
           volume_mount {
             name = "grafana-storage"
             mount_path = "/var/lib/grafana"

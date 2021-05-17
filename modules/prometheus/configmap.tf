@@ -7,8 +7,8 @@ resource "kubernetes_config_map" "configmap" {
     }
   }
   data = {
-    "prometheus.rules" = "${file("${path.module}/prometheus.rules.yml")}"
-    "prometheus.yml" = "${file("${path.module}/prometheus.yml")}"
+    "prometheus.rules" = file("${path.module}/prometheus.rules.yml")
+    "prometheus.yml" = file("${path.module}/prometheus.yml")
   }
 
 }
